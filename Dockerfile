@@ -25,7 +25,6 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
 # Return to the main directory
 WORKDIR /usr/src/app
 
-COPY settings settings
 RUN apt-get update && apt-get install -y libgl1-mesa-glx
 RUN apt-get update && apt-get install -y libglvnd0
 RUN apt-get update && apt-get install -y xvfb
@@ -37,5 +36,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy model files
 COPY . .
 
-
-RUN python main.py
+CMD python -u handler.py
+# RUN python main.py
