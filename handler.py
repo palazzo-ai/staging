@@ -4,6 +4,8 @@ Contains the handler function that will be called by the serverless.
 
 import os
 import base64
+import cv2
+import numpy as np
 import concurrent.futures
 
 import torch
@@ -26,7 +28,10 @@ MODELS = Staging()
 
 # ---------------------------------- Helper ---------------------------------- #
 
-
+def image_to_base64(output_image, ext=".jpg"):
+    _, encoded_image = cv2.imencode(ext, cv2.cvtColor(output_image, cv2.COLOR_RGB2BGR))
+    image_string = base64.b64encode(encoded_image).decode("utf-8")
+    return image_string
 
 def _save_and_upload_images(images, job_id):
     os.makedirs(f"/{job_id}", exist_ok=True)
@@ -78,24 +83,28 @@ def generate_image(job):
     num_images_per_prompt=job_input['num_images']
     num_inference_steps=job_input['num_inference_steps']
     guidance_scale=job_input['guidance_scale']
-    seed=seed
+    seed=job_input['seed']
     
     output = MODELS.base(
         prompt=prompt,
         negative_prompt=negative_prompt,
         image=image,
-        num_images_per_prompt=num_images_per_prompt,
+        num_images_per_prompt=1,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
         num_inference_step=30,
         seed=seed,
     ).images
 
-    image_urls = _save_and_upload_images(output, job['id'])
+    # image_urls = _save_and_upload_images(output, job['id'])
+    image_string = []
+    for img in output:
+        if not isinstance(img, np.ndarray):
+            output_image = np.array(img)
+        image_string.append(image_to_base64(output_image))
 
     results = {
-        "images": image_urls,
-        "image_url": image_urls[0],
+        "result": image_string[0],
         "seed": job_input['seed']
     }
 
