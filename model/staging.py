@@ -57,7 +57,7 @@ class Staging:
         """
         self.pipeline = StableDiffusionXLInpaintPipeline.from_single_file(
             # "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
-            "checkpoints/Juggernaut_X_RunDiffusion.safetensors",
+            "checkpoints/juggerxlInpaint_juggerInpaintV8.safetensors",
             torch_dtype=torch.float16,
             variant="fp16",
         ).to(device)

@@ -72,3 +72,34 @@ for idx, item in enumerate(img_list):
             print(item)
 
             staging(idx, image, room_type, architecture_style)
+
+"""
+{
+  "input": {
+    "prompt": "The ((modern bedroom)), style, ((best quality)),((masterpiece)),((realistic))",
+    "negative_prompt": "blurry, unrealistic, synthatic, window, door, fireplace, out of order, deformed, disfigured, watermark, text, banner, logo, contactinfo, surreal longbody, lowres, bad anatomy, bad hands, jpeg artifacts, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, rug",
+    "image_url": "https://storage.googleapis.com/generative-models-output/empty_room.jpg",
+    "num_inference_steps": 25,
+    "refiner_inference_steps": 30,
+    "guidance_scale": 5,
+    "strength": 0.3,
+    "seed": -1,
+    "num_images": 1
+  }
+}
+'
+https://civitai.com/api/download/models/288402
+{
+  "input": {
+    "prompt": "The ((modern bedroom)), style, ((best quality)),((masterpiece)),((realistic))",
+    "negative_prompt": "blurry, unrealistic, synthatic, window, door, fireplace, out of order, deformed, disfigured, watermark, text, banner, logo, contactinfo, surreal longbody, lowres, bad anatomy, bad hands, jpeg artifacts, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, rug",
+    "image_url": "https://storage.googleapis.com/generative-models-output/empty_room.jpg",
+    "num_inference_steps": 25,
+    "refiner_inference_steps": 30,
+    "guidance_scale": 5,
+    "strength": 0.3,
+    "seed": -1,
+    "num_images": 1
+  }
+}
+"""

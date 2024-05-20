@@ -24,7 +24,7 @@ torch.cuda.empty_cache()
 
 # ------------------------------- Model Handler ------------------------------ #
 
-MODELS = Staging()
+MODEL = Staging()
 
 # ---------------------------------- Helper ---------------------------------- #
 
@@ -85,7 +85,7 @@ def generate_image(job):
     guidance_scale=job_input['guidance_scale']
     seed=job_input['seed']
     
-    output = MODELS.base(
+    output = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         image=image,
