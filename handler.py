@@ -28,10 +28,17 @@ MODEL = Staging()
 
 # ---------------------------------- Helper ---------------------------------- #
 
+def decode_base64_image(image_string):
+    image_binary = base64.b64decode(image_string)
+    image = Image.open(io.BytesIO(image_binary))
+    return image
+
+
 def image_to_base64(output_image, ext=".jpg"):
     _, encoded_image = cv2.imencode(ext, cv2.cvtColor(output_image, cv2.COLOR_RGB2BGR))
     image_string = base64.b64encode(encoded_image).decode("utf-8")
     return image_string
+
 
 def _save_and_upload_images(images, job_id):
     os.makedirs(f"/{job_id}", exist_ok=True)
@@ -68,14 +75,18 @@ def generate_image(job):
     #     return {"error": validated_input['errors']}
     # job_input = validated_input['validated_input']
 
-    starting_image = job_input['image_url']
+    if job_input.get('image_url'):
+        starting_image = job_input['image_url']
+        image = load_image(starting_image).convert("RGB")
+    else:
+        starting_image = job_input['image']
+        image = decode_base64_image(starting_image)
 
     if job_input['seed'] is None:
         job_input['seed'] = int.from_bytes(os.urandom(2), "big")
 
     generator = torch.Generator("cuda").manual_seed(job_input['seed'])
     
-    image = load_image(starting_image).convert("RGB")
     image = set_img_dims(image)
     
     prompt = job_input['prompt']
