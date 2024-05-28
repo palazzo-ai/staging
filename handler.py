@@ -68,13 +68,6 @@ def generate_image(job):
     '''
     job_input = job["input"]
 
-    # Input validation
-    # validated_input = validate(job_input, INPUT_SCHEMA)
-
-    # if 'errors' in validated_input:
-    #     return {"error": validated_input['errors']}
-    # job_input = validated_input['validated_input']
-
     if job_input.get('image_url'):
         starting_image = job_input['image_url']
         image = load_image(starting_image).convert("RGB")
@@ -89,33 +82,47 @@ def generate_image(job):
     
     image = set_img_dims(image)
     
-    prompt = job_input['prompt']
-    negative_prompt=job_input['negative_prompt']
-    num_images_per_prompt=job_input['num_images']
-    num_inference_steps=job_input['num_inference_steps']
-    guidance_scale=job_input['guidance_scale']
-    seed=job_input['seed']
+    prompt = job_input.get("prompt", None)
+    negative_prompt = job_input.get("negative_prompt", None)
+    num_images_per_prompt = job_input.get("num_images", 1)
+    num_inference_step = job_input.get("num_inference_step", 30)
+    guidance_scale = job_input.get("guidance_scale", 5)
+    seed = job_input.get("seed", -1)
+    width = job_input.get('width', None)
+    height = job_input.get('height', None)
     
-    output = MODEL(
+    padding_factor = job_input.get('mask_padding', 5)
+    blur_factor = job_input.get('blur_factor', 5)
+    
+    output, mask = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         image=image,
         num_images_per_prompt=1,
-        num_inference_steps=num_inference_steps,
+        num_inference_step=num_inference_steps,
         guidance_scale=guidance_scale,
-        num_inference_step=30,
+        width=width,
+        height=height,
         seed=seed,
-    ).images
+        padding_factor=padding_factor,
+        blur_factor=blur_factor
+    )
 
     # image_urls = _save_and_upload_images(output, job['id'])
     image_string = []
-    for img in output:
+    for img in output.images:
         if not isinstance(img, np.ndarray):
             output_image = np.array(img)
         image_string.append(image_to_base64(output_image))
 
+    if not isinstance(mask, np.ndarray):
+        mask_image = np.array(mask)
+    mask_image = image_to_base64(mask_image)
+    
+    
     results = {
         "result": image_string[0],
+        "mask": mask_image,
         "seed": job_input['seed']
     }
 

@@ -6,22 +6,26 @@ from diffusers import StableDiffusionUpscalePipeline, DPMSolverMultistepSchedule
 
 from utils import get_mask
 
-def set_img_dims(img, max_dim=1024):
+
+def set_img_dims(img, min_dim=1024):
     """
-    Resizes the image so that its largest dimension is equal to max_dim while 
+    Resizes the image so that its smallest dimension is equal to min_dim while 
     maintaining the aspect ratio.
     
     Args:
         img (PIL.Image): The input image.
-        max_dim (int): The maximum dimension size (default is 1024).
+        min_dim (int): The minimum dimension size (default is 1024).
 
     Returns:
         PIL.Image: The resized image.
     """
     w, h = img.size
-    scaler = max(w, h) / max_dim
-    img = img.resize((int(w / scaler), int(h / scaler)))
+    # Calculate scaling factor to make the smallest dimension at least min_dim
+    if min(w, h) < min_dim:
+        scaler = min_dim / min(w, h)
+        img = img.resize((int(w * scaler), int(h * scaler)), Image.ANTIALIAS)
     return img
+
 
 def resize_image(img):
     """
@@ -43,6 +47,8 @@ def resize_image(img):
     # Resize the image while maintaining the aspect ratio
     img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
     return img
+
+
 
 class Staging:
     def __init__(self, seed=False, roomtype="bedroom", device="cuda"):
@@ -138,7 +144,7 @@ class Staging:
             prompt=prompt, image=inp_img, num_inference_steps=num_steps
         ).images[0]
 
-    def preprocess_img(self, img, blur_factor=5):
+    def preprocess_img(self, img, blur_factor=5, padding_factor=5):
         """
         Preprocesses the input image by resizing it and generating a mask.
 
@@ -151,7 +157,7 @@ class Staging:
         """
         img = set_img_dims(img)
         img = resize_image(img)
-        mask = np.array(get_mask(img, padding_factor=20))
+        mask = np.array(get_mask(img, padding_factor))
         mask = mask.astype("uint8")
         mask = self.pipeline.mask_processor.blur(
             Image.fromarray(mask), blur_factor=blur_factor
@@ -174,11 +180,19 @@ class Staging:
         """
         if not preprocessed:
             print("preprocessing image...")
-            image, mask = self.preprocess_img(image)
-        if "height" not in kwargs and "width" not in kwargs:
-            kwargs["width"], kwargs["height"] = image.size
+            padding_factor = kwargs["padding_factor"]
+            blur_factor = kwargs["blur_factor"]
+            image, mask = self.preprocess_img(image, blur_factor, padding_factor)
+        
+        # Removing extra keys
+        kwargs.pop('padding_factor', None)
+        kwargs.pop('blur_factor', None)
+        
+        if kwargs.get("width") is None:
+            kwargs["width"] = image.size[0]
+        if kwargs.get("height") is None:
+            kwargs["height"] = image.size[1]
 
-        kwargs["num_inference_steps"] = 30
         out_imgs = self.pipeline(
             prompt=prompt,
             negative_prompt=negative_prompt,
@@ -187,4 +201,4 @@ class Staging:
             generator=self.generator,
             **kwargs
         )
-        return out_imgs
+        return out_imgs, mask
