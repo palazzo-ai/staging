@@ -68,8 +68,10 @@ class Staging:
             variant="fp16",
         ).to(device)
         
-        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors')
+        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
         print("Loaded add-detail")
+        self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
+        print("Loaded bedroom-LoRA")
         
         # controlnet = ControlNetModel.from_pretrained(
         #     "destitech/controlnet-inpaint-dreamer-sdxl", torch_dtype=torch.float16, variant="fp16"
