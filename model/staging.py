@@ -68,10 +68,6 @@ class Staging:
             variant="fp16",
         ).to(device)
         
-        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
-        print("Loaded add-detail")
-        self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
-        print("Loaded bedroom-LoRA")
         
         # controlnet = ControlNetModel.from_pretrained(
         #     "destitech/controlnet-inpaint-dreamer-sdxl", torch_dtype=torch.float16, variant="fp16"
@@ -93,6 +89,17 @@ class Staging:
 
         if seed:
             self.set_seed()
+        
+    def load_lora(self, room_type):
+        self.pipe.unload_lora_weights()
+
+        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
+        print("Loaded add-detail")
+
+                
+        if room_type == "bedroom":
+            self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
+            print("Loaded bedroom-LoRA")            
 
     def set_seed(self, s=1000):
         """
@@ -189,6 +196,11 @@ class Staging:
         # Removing extra keys
         kwargs.pop('padding_factor', None)
         kwargs.pop('blur_factor', None)
+        kwargs.pop('blur_factor', None)
+        
+        # Load appropriate room_type LoRA
+        room_type = kwargs.pop('room_type')
+        self.load_lora(room_type)
         
         if kwargs.get("width") is None:
             kwargs["width"] = image.size[0]
