@@ -94,7 +94,7 @@ class Staging:
 
                 
         if room_type == "bedroom":
-            self.pipeline.load_lora_weights('checkpoints/bedroom_sd_xl.safetensors')
+            self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
             print("Loaded bedroom-LoRA")            
 
     def predict(self, prompt, negative_prompt, image, mask_image):
