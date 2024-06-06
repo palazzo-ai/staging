@@ -91,7 +91,7 @@ class Staging:
             self.set_seed()
         
     def load_lora(self, room_type):
-        self.pipe.unload_lora_weights()
+        self.pipeline.unload_lora_weights()
 
         self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
         print("Loaded add-detail")
