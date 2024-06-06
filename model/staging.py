@@ -51,7 +51,7 @@ def resize_image(img):
 
 
 class Staging:
-    def __init__(self, seed=False, roomtype="bedroom", device="cuda"):
+    def __init__(self, device="cuda"):
         """
         Initializes the Staging class with a Stable Diffusion inpainting pipeline, 
         scheduler, and random generator.
@@ -85,10 +85,6 @@ class Staging:
             self.pipeline.scheduler.config, use_karras_sigmas=True
         )
         self.pipeline.safety_checker = None
-        self.generator = torch.Generator(device=device)
-
-        if seed:
-            self.set_seed()
         
     def load_lora(self, room_type):
         self.pipeline.unload_lora_weights()
@@ -98,17 +94,8 @@ class Staging:
 
                 
         if room_type == "bedroom":
-            self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
+            self.pipeline.load_lora_weights('checkpoints/bedroom_sd_xl.safetensors')
             print("Loaded bedroom-LoRA")            
-
-    def set_seed(self, s=1000):
-        """
-        Sets the random seed for reproducibility.
-
-        Args:
-            s (int): The seed value (default is 1000).
-        """
-        self.generator.manual_seed(s)
 
     def predict(self, prompt, negative_prompt, image, mask_image):
         """
@@ -202,9 +189,9 @@ class Staging:
         room_type = kwargs.pop('room_type')
         self.load_lora(room_type)
         
-        if kwargs.get("width") is None:
+        if (kwargs.get("width") is None) or (kwargs.get("width") == 0):
             kwargs["width"] = image.size[0]
-        if kwargs.get("height") is None:
+        if (kwargs.get("height") is None) or (kwargs.get("height") == 0):
             kwargs["height"] = image.size[1]
 
         out_imgs = self.pipeline(
@@ -212,7 +199,6 @@ class Staging:
             negative_prompt=negative_prompt,
             image=image,
             mask_image=mask,
-            generator=self.generator,
             **kwargs
         )
         return out_imgs, mask
