@@ -63,13 +63,13 @@ Start the application
     uvicorn app:app --reload
 ```
 cURL request
-```json
+```bash
 curl -X 'POST' \
-  'http://127.0.0.1:8000/process?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fgenerative-models-output%2Fempty_room.jpg&room_type=bedroom' \
+  'http://127.0.0.1:8008/process?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fgenerative-models-output%2Fempty_room.jpg&room_type=bedroom' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "prompt": "a bed room",
+  "prompt": "a bedroom",
   "negative_prompt": "string",
   "num_images_per_prompt": 1,
   "num_inference_step": 30,
