@@ -56,3 +56,27 @@ It is important to have checkpoints folder with SDXL checkpoint and add_detail L
     "num_images": 1
   }
 }
+```
+## FastAPI
+Start the application
+```bash
+    uvicorn app:app --reload
+```
+cURL request
+```json
+curl -X 'POST' \
+  'http://127.0.0.1:8000/process?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fgenerative-models-output%2Fempty_room.jpg&room_type=bedroom' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "prompt": "a bed room",
+  "negative_prompt": "string",
+  "num_images_per_prompt": 1,
+  "num_inference_step": 30,
+  "guidance_scale": 5,
+  "seed": -1,
+  "width": 0,
+  "height": 0,
+  "padding_factor": 5,
+  "blur_factor": 5
+}'
