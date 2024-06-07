@@ -67,7 +67,7 @@ class TextRequest(BaseModel):
     prompt: Optional[str] = None
     negative_prompt: Optional[str] = None
     num_images_per_prompt: int = 1
-    num_inference_step: int = 30
+    num_inference_steps: int = 30
     guidance_scale: float = 5.0
     seed: int = -1
     width: Optional[int] = None
@@ -104,7 +104,8 @@ def _stage(response):
     negative_prompt = response.get("negative_prompt", None)
     room_type = response.get("room_type", "bedroom")
     num_images_per_prompt = response.get("num_images", 1)
-    num_inference_step = response.get("num_inference_step", 35)
+    print(response["num_inference_steps"])
+    num_inference_steps = response.get("num_inference_steps", 35)
     guidance_scale = response.get("guidance_scale", 5)
     seed = response.get("seed", -1)
     width = response.get('width', None)
@@ -119,7 +120,7 @@ def _stage(response):
         room_type=room_type,
         image=image,
         num_images_per_prompt=num_images_per_prompt,
-        num_inference_step=num_inference_step,
+        num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
         width=width,
         height=height,
@@ -164,7 +165,7 @@ async def process_image(room_request: TextRequest,
             "prompt": room_request.prompt,
             "negative_prompt": room_request.negative_prompt,
             "num_images_per_prompt": room_request.num_images_per_prompt,
-            "num_inference_step": room_request.num_inference_step,
+            "num_inference_steps": room_request.num_inference_steps,
             "guidance_scale": room_request.guidance_scale,
             "seed": room_request.seed,
             "width": room_request.width,

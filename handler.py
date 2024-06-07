@@ -120,7 +120,7 @@ def generate_image(job):
     negative_prompt = job_input.get("negative_prompt", None)
     room_type = job_input.get("room_type", "bedroom")
     num_images_per_prompt = job_input.get("num_images", 1)
-    num_inference_step = job_input.get("num_inference_step", 35)
+    num_inference_steps = job_input.get("num_inference_steps", 35)
     guidance_scale = job_input.get("guidance_scale", 5)
     seed = job_input.get("seed", -1)
     width = job_input.get('width', None)
@@ -135,7 +135,7 @@ def generate_image(job):
         room_type=room_type,
         image=image,
         num_images_per_prompt=num_images_per_prompt,
-        num_inference_step=num_inference_step,
+        num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
         width=width,
         height=height,
