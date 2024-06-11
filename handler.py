@@ -127,6 +127,7 @@ def generate_image(job):
     height = job_input.get('height', None)
     padding_factor = job_input.get('mask_padding', 5)
     blur_factor = job_input.get('blur_factor', 5)
+    controlnet = job_input.get("controlnet", "mlsd")
     
     # Generate image and mask using the model
     output, mask = MODEL(
@@ -134,6 +135,7 @@ def generate_image(job):
         negative_prompt=negative_prompt,
         room_type=room_type,
         image=image,
+        controlnet=controlnet,
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,

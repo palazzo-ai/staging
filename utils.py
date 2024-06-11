@@ -6,6 +6,16 @@ from ade import TARGET_CLASSES, ADE_CLASSES
 from transformers import OneFormerProcessor, OneFormerForUniversalSegmentation
 
 
+def show_gpu():
+    if torch.cuda.is_available():
+        gpu_info = torch.cuda.get_device_properties(0)
+        print(f"GPU Name: {gpu_info.name}")
+        print(f"Total Memory: {gpu_info.total_memory / 1e9:.2f} GB")
+        print(f"Compute Capability: {gpu_info.major}.{gpu_info.minor}")
+        print(f"Multi-Processor Count: {gpu_info.multi_processor_count}")
+    else:
+        print("No GPU available.")
+
 class OneFormer:
     def __init__(self, use_cuda: bool = True) -> None:
         """

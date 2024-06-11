@@ -20,7 +20,7 @@ from utils import set_img_dims
 
 # Initialise model
 MODEL = None
-MODEL_NAME = "redraft"
+MODEL_NAME = "staging"
 
 
 # ===============================================================
@@ -74,6 +74,7 @@ class TextRequest(BaseModel):
     height: Optional[int] = None
     padding_factor: float = 5.0
     blur_factor: float = 5.0
+    controlnet: Optional[str] = None
 
 def cast_to(data, cast_type):
     try:
@@ -112,13 +113,15 @@ def _stage(response):
     height = response.get('height', None)
     padding_factor = response.get('mask_padding', 5)
     blur_factor = response.get('blur_factor', 5)
+    controlnet = response.get("controlnet", "mlsd")
     
     # Generate image and mask using the model
-    output, mask = MODEL(
+    output, mask, control_condition_image = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         room_type=room_type,
         image=image,
+        controlnet=controlnet,
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
@@ -142,11 +145,18 @@ def _stage(response):
         mask_image = np.array(mask)
     Image.fromarray(mask_image).save('mask.jpg')
     mask_image = image_to_base64(mask_image)
+
+    # Encode mask to base64
+    if not isinstance(control_condition_image, np.ndarray):
+        control_condition_image = np.array(control_condition_image)    
+    Image.fromarray(control_condition_image).save('control.jpg')
+    control_condition_image = image_to_base64(control_condition_image)
     
     # Prepare results dictionary
     results = {
         "result": image_strings[0],
         "mask": mask_image,
+        "control_condition_image": control_condition_image,
         "seed": response['seed']
     }
 

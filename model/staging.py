@@ -5,7 +5,7 @@ from diffusers import StableDiffusionXLInpaintPipeline, StableDiffusionXLControl
 from diffusers import StableDiffusionUpscalePipeline, DPMSolverMultistepScheduler
 
 from utils import get_mask
-
+from control_nets import get_mlsd_image
 
 def set_img_dims(img, min_dim=1024):
     """
@@ -51,7 +51,7 @@ def resize_image(img):
 
 
 class Staging:
-    def __init__(self, device="cuda"):
+    def __init__(self, control_net="mlsd", device="cuda"):
         """
         Initializes the Staging class with a Stable Diffusion inpainting pipeline, 
         scheduler, and random generator.
@@ -61,9 +61,14 @@ class Staging:
             roomtype (str): The type of room (default is "bedroom").
             device (str): The device to run the pipeline on (default is "cuda").
         """
-        self.pipeline = StableDiffusionXLInpaintPipeline.from_single_file(
+        
+        # controlnet = ControlNetModel.from_pretrained("checkpoints/checkpoint-500/controlnet", torch_dtype=torch.float16)
+        controlnet = ControlNetModel.from_pretrained("/root/sdxl/staging/checkpoints/controlnet", torch_dtype=torch.float16)
+        
+        self.pipeline = StableDiffusionXLControlNetInpaintPipeline.from_single_file(
             # "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
             "checkpoints/juggerxlInpaint_juggerInpaintV8.safetensors",
+            controlnet=controlnet,
             torch_dtype=torch.float16,
             variant="fp16",
         ).to(device)
@@ -91,11 +96,21 @@ class Staging:
 
         self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
         print("Loaded add-detail")
-
                 
         if room_type == "bedroom":
             self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
-            print("Loaded bedroom-LoRA")            
+            print("Loaded bedroom-LoRA")
+
+
+    def load_controlnet(self, controlnet):
+
+        self.pipeline.controlnet_map = None
+        torch.cuda.empty_cache()
+                
+        if controlnet == "mlsd":
+            controlnet = ControlNetModel.from_pretrained("checkpoints/checkpoint-500/controlnet", torch_dtype=torch.float16)
+            print("Loaded mlsd-controlnet")
+
 
     def predict(self, prompt, negative_prompt, image, mask_image):
         """
@@ -189,6 +204,11 @@ class Staging:
         room_type = kwargs.pop('room_type')
         self.load_lora(room_type)
         
+        # Check if a controlnet is selected
+        if kwargs.get("controlnet"):
+            kwargs.pop('controlnet')
+            control_image = get_mlsd_image(image)
+        
         if (kwargs.get("width") is None) or (kwargs.get("width") == 0):
             kwargs["width"] = image.size[0]
         if (kwargs.get("height") is None) or (kwargs.get("height") == 0):
@@ -199,6 +219,7 @@ class Staging:
             negative_prompt=negative_prompt,
             image=image,
             mask_image=mask,
+            control_image=control_image,
             **kwargs
         )
-        return out_imgs, mask
+        return out_imgs, mask, control_image
