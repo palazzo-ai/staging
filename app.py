@@ -74,7 +74,8 @@ class TextRequest(BaseModel):
     height: Optional[int] = None
     padding_factor: float = 5.0
     blur_factor: float = 5.0
-    controlnet: Optional[str] = None
+    controlnet: Optional[str] = "mlsd"
+    controlnet_conditioning_scale: Optional[float] = 1.0
 
 def cast_to(data, cast_type):
     try:
@@ -114,6 +115,7 @@ def _stage(response):
     padding_factor = response.get('mask_padding', 5)
     blur_factor = response.get('blur_factor', 5)
     controlnet = response.get("controlnet", "mlsd")
+    controlnet_conditioning_scale = response.get('controlnet_conditioning_scale', 1.0)
     
     # Generate image and mask using the model
     output, mask, control_condition_image = MODEL(
@@ -122,6 +124,7 @@ def _stage(response):
         room_type=room_type,
         image=image,
         controlnet=controlnet,
+        controlnet_conditioning_scale=controlnet_conditioning_scale,
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
@@ -181,7 +184,9 @@ async def process_image(room_request: TextRequest,
             "width": room_request.width,
             "height": room_request.height,
             "padding_factor": room_request.padding_factor,
-            "blur_factor": room_request.blur_factor
+            "blur_factor": room_request.blur_factor,
+            "blur_factor": room_request.controlnet,
+            "blur_factor": room_request.controlnet_conditioning_scale
         }
         
         response = _stage(response)

@@ -48,6 +48,7 @@ def staging(idx, image, room_type, architecture_style):
     seed = seed
     padding_factor = 3
     blur_factor = 3
+    controlnet_conditioning_scale = 1.0
 
     print(prompt)
     # Generate output images using the model
@@ -56,6 +57,7 @@ def staging(idx, image, room_type, architecture_style):
         negative_prompt=negative_prompt,
         image=image,
         controlnet=controlnet,
+        controlnet_conditioning_scale=controlnet_conditioning_scale,
         room_type="bedroom",
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
