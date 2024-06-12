@@ -37,7 +37,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Download mlsd weights
-RUN python control_nets.py
+# RUN python control_nets.py
 
 CMD python -u handler.py
 # RUN python main.py

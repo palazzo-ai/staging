@@ -63,7 +63,7 @@ class Staging:
         """
         
         # controlnet = ControlNetModel.from_pretrained("checkpoints/checkpoint-500/controlnet", torch_dtype=torch.float16)
-        controlnet = ControlNetModel.from_pretrained("/root/sdxl/staging/checkpoints/controlnet", torch_dtype=torch.float16)
+        controlnet = ControlNetModel.from_pretrained("checkpoints/controlnet", torch_dtype=torch.float16)
         
         self.pipeline = StableDiffusionXLControlNetInpaintPipeline.from_single_file(
             # "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
@@ -202,7 +202,7 @@ class Staging:
         
         # Load appropriate room_type LoRA
         room_type = kwargs.pop('room_type')
-        self.load_lora(room_type)
+        # self.load_lora(room_type)
         
         # Check if a controlnet is selected
         if kwargs.get("controlnet"):

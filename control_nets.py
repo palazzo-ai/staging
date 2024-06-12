@@ -2,14 +2,10 @@ from PIL import Image
 
 import torch
 from controlnet_aux import MLSDdetector
-from diffusers import ControlNetModel
 
 
 device = "cuda"
 dtype = torch.float16
-
-controlnet_mlsd = ControlNetModel.from_pretrained(
-    "lllyasviel/sd-controlnet-mlsd", torch_dtype=dtype, use_safetensors=True).to(device)
 
 mlsd_processor = MLSDdetector.from_pretrained("lllyasviel/Annotators").to(device)
 

@@ -130,7 +130,7 @@ def generate_image(job):
     controlnet = job_input.get("controlnet", "mlsd")
     
     # Generate image and mask using the model
-    output, mask = MODEL(
+    output, mask, control_condition_image = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         room_type=room_type,
@@ -158,10 +158,17 @@ def generate_image(job):
         mask_image = np.array(mask)
     mask_image = image_to_base64(mask_image)
     
+    # Encode mask to base64
+    if not isinstance(control_condition_image, np.ndarray):
+        control_condition_image = np.array(control_condition_image)    
+    Image.fromarray(control_condition_image).save('control.jpg')
+    control_condition_image = image_to_base64(control_condition_image)
+
     # Prepare results dictionary
     results = {
         "result": image_strings[0],
         "mask": mask_image,
+        "control_condition_image": control_condition_image,
         "seed": job_input['seed']
     }
 
