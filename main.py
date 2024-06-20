@@ -19,7 +19,7 @@ def flush():
 model = Staging()
 
 # Open the input image
-image = Image.open("test_images/1.jpg")
+# image = Image.open("test_images/1.jpg")
 room_types = ["bedroom", "living room"]
 architecture_styles = ["modern", "scandinavian", "boho", "industrial", "contemporary"]
 
@@ -32,74 +32,60 @@ def staging(idx, image, room_type, architecture_style):
     # architecture_style = "modern"
 
     # Create the text prompt for the model
-    prompt = f"The (({architecture_style} {room_type})), style, ((best quality)),((masterpiece)),((realistic))"
-    prompt += random.choice(RANDOM_PHRASES)
+    # prompt = f"The (({architecture_style} {room_type})), style, ((best quality)),((masterpiece)),((realistic))"
+    prompt = "coastal living room, ultra-realistic, 4K, 8K, HD, high quality, photorealistic, professional, highly detailed, real life, high-resolution, full HD, high-resolution image, 8K Ultra HD,  high detailed,  hyperdetailed photography"
+    # prompt += random.choice(RANDOM_PHRASES)
     negative_prompt = "blurry, unrealistic, synthatic, window, door, fireplace, out of order, deformed, disfigured, watermark, text, banner, logo, contactinfo, surreal longbody, lowres, bad anatomy, bad hands, jpeg artifacts, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, rug"
 
     # Set parameters for the model inference
+    room_type = "bedroom"
     num_inference_steps = 20
-    num_images_per_prompt = 5
+    num_images_per_prompt = 2
+    strength = 0.7
     seed = -1
     guidance_scale = 5
+    padding_factor = 5
+    blur_factor = 5
     print(prompt)
     # Generate output images using the model
-    output_images = model(
+    output_images, mask = model(
         prompt,
         negative_prompt=negative_prompt,
         image=image,
+        room_type=room_type,
+        strength=strength,
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
         num_inference_step=30,
         seed=seed,
-    ).images
+        padding_factor=padding_factor,
+        blur_factor=blur_factor
+    )
 
     # Save the generated images to the output directory
-    for idxx, output in enumerate(output_images):
-        output.save(f"output/add-detail_{idx}_{idxx}_{room_type}_{architecture_style}_image.jpg")
-    
+    for idxx, output in enumerate(output_images.images):
+        output.save(f"test_output/{idx+1}_image.jpg")
+    mask.save(f"test_output/{idx+1}_mask.jpg")
     flush()
 
-img_list = os.listdir("good")
+dir = "test"
+img_list = os.listdir(dir)
 
-for idx, item in enumerate(img_list):
-    # Open the input image
-    image = Image.open("good/" + item)
-    image = set_img_dims(image)
+idx = 3
+image = Image.open("test/4.jpg")
+image = set_img_dims(image)
+room_type = "bedroom"
+architecture_style = "architecture_style"
+staging(idx, image, room_type, architecture_style)
 
-    for room_type in room_types:
-        for architecture_style in architecture_styles:
-            print(item)
+# for idx, item in enumerate(img_list):
+#     # Open the input image
+#     image = Image.open(f"{dir}/" + item)
+#     image = set_img_dims(image)
 
-            staging(idx, image, room_type, architecture_style)
+#     for room_type in room_types:
+#         for architecture_style in architecture_styles:
+#             print(item)
 
-"""
-{
-  "input": {
-    "prompt": "The ((modern bedroom)), style, ((best quality)),((masterpiece)),((realistic))",
-    "negative_prompt": "blurry, unrealistic, synthatic, window, door, fireplace, out of order, deformed, disfigured, watermark, text, banner, logo, contactinfo, surreal longbody, lowres, bad anatomy, bad hands, jpeg artifacts, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, rug",
-    "image_url": "https://storage.googleapis.com/generative-models-output/empty_room.jpg",
-    "num_inference_steps": 25,
-    "refiner_inference_steps": 30,
-    "guidance_scale": 5,
-    "strength": 0.3,
-    "seed": -1,
-    "num_images": 1
-  }
-}
-'
-https://civitai.com/api/download/models/288402
-{
-  "input": {
-    "prompt": "The ((modern bedroom)), style, ((best quality)),((masterpiece)),((realistic))",
-    "negative_prompt": "blurry, unrealistic, synthatic, window, door, fireplace, out of order, deformed, disfigured, watermark, text, banner, logo, contactinfo, surreal longbody, lowres, bad anatomy, bad hands, jpeg artifacts, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, rug",
-    "image_url": "https://storage.googleapis.com/generative-models-output/empty_room.jpg",
-    "num_inference_steps": 25,
-    "refiner_inference_steps": 30,
-    "guidance_scale": 5,
-    "strength": 0.3,
-    "seed": -1,
-    "num_images": 1
-  }
-}
-"""
+#     staging(idx, image, room_type, architecture_style)
