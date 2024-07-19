@@ -108,9 +108,6 @@ def generate_image(job):
     if job_input.get('seed') is None:
         print("Seed not provided. Generating random seed.")
         job_input['seed'] = int.from_bytes(os.urandom(2), "big")
-
-    # Create a random generator with the specified seed
-    generator = torch.Generator("cuda").manual_seed(job_input['seed'])
     
     # Adjust image dimensions
     image = set_img_dims(image)
@@ -121,12 +118,13 @@ def generate_image(job):
     room_type = job_input.get("room_type", "bedroom")
     num_images_per_prompt = job_input.get("num_images", 1)
     num_inference_steps = job_input.get("num_inference_steps", 25)
-    guidance_scale = job_input.get("guidance_scale", 6)
+    guidance_scale = job_input.get("guidance_scale", 7)
     seed = job_input.get("seed", -1)
     width = job_input.get('width', None)
     height = job_input.get('height', None)
-    padding_factor = job_input.get('mask_padding', 32)
-    blur_factor = job_input.get('blur_factor', 16)
+    padding_factor = job_input.get('mask_padding', 8)
+    blur_factor = job_input.get('blur_factor', 8)
+    strength = job_input.get('strength', 0.8)
     
     # Generate image and mask using the model
     output, mask = MODEL(
@@ -142,7 +140,7 @@ def generate_image(job):
         seed=seed,
         padding_factor=padding_factor,
         blur_factor=blur_factor,
-        strength=0.80,
+        strength=strength,
     )
 
     # Encode output images to base64
