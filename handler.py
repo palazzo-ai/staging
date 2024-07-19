@@ -8,7 +8,6 @@ import base64
 import cv2
 import numpy as np
 from PIL import Image
-import concurrent.futures
 
 import torch
 from model.staging import Staging
@@ -106,7 +105,8 @@ def generate_image(job):
         image = decode_base64_image(starting_image)
 
     # Set random seed if not provided
-    if job_input['seed'] is None:
+    if job_input.get('seed') is None:
+        print("Seed not provided. Generating random seed.")
         job_input['seed'] = int.from_bytes(os.urandom(2), "big")
 
     # Create a random generator with the specified seed
@@ -120,13 +120,13 @@ def generate_image(job):
     negative_prompt = job_input.get("negative_prompt", None)
     room_type = job_input.get("room_type", "bedroom")
     num_images_per_prompt = job_input.get("num_images", 1)
-    num_inference_steps = job_input.get("num_inference_steps", 35)
-    guidance_scale = job_input.get("guidance_scale", 7)
+    num_inference_steps = job_input.get("num_inference_steps", 25)
+    guidance_scale = job_input.get("guidance_scale", 6)
     seed = job_input.get("seed", -1)
     width = job_input.get('width', None)
     height = job_input.get('height', None)
-    padding_factor = job_input.get('mask_padding', 5)
-    blur_factor = job_input.get('blur_factor', 5)
+    padding_factor = job_input.get('mask_padding', 32)
+    blur_factor = job_input.get('blur_factor', 16)
     
     # Generate image and mask using the model
     output, mask = MODEL(
@@ -137,14 +137,12 @@ def generate_image(job):
         num_images_per_prompt=num_images_per_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
-        denoising_start=0.7,
-        denoising_end=0.9,
-        strength=0.7,
         width=width,
         height=height,
         seed=seed,
         padding_factor=padding_factor,
-        blur_factor=blur_factor
+        blur_factor=blur_factor,
+        strength=0.80,
     )
 
     # Encode output images to base64
@@ -152,6 +150,11 @@ def generate_image(job):
     for img in output.images:
         if not isinstance(img, np.ndarray):
             output_image = np.array(img)
+        
+        # Save image local
+        img.save("outputs/output.jpg")
+        
+        
         image_strings.append(image_to_base64(output_image))
 
     # Encode mask to base64

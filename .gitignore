@@ -14,5 +14,6 @@ temp*
 checkpoints*
 staging-data-*
 output_dir
+outputs
 
 .vscode/

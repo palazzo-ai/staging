@@ -1,9 +1,7 @@
 {
   "input": {
-    "image_url": "https://s.zillowstatic.com/z3d-home/models/avs_trial_photos/Office/23-print-Trythall_St-023.jpg",
-    "prompt": "Contemporary style bedroom, architecture photography, photo from pintrest, realistic image",
-    "negative_prompt": "bad quality, low-resolution",
-    "room_type": "bedroom",
-    "seed": -1
+    "image_url": "https://palazzob2c-dev.s3.amazonaws.com/image-b125f3c9-6aaf-4c7b-b9e1-5ed323828b27.jpg",
+    "prompt": "modern bedroom, 4K, HD, high resolution, architecture photography, photo from pintrest, realistic image, <lora:add_detail:0.8>",
+    "negative_prompt": "blurry, unrealistic, synthatic, deformed, disfigured, watermark, text, banner, logo, contactinfo, worst quality, low quality"
   }
 }

@@ -75,7 +75,7 @@ class Staging:
         
     def load_lora(self):
         self.pipeline.unload_lora_weights()
-        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1)
+        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=0.9)
    
 
     def predict(self, prompt, negative_prompt, image, mask_image):
