@@ -1,0 +1,9 @@
+{
+  "input": {
+    "image_url": "https://s.zillowstatic.com/z3d-home/models/avs_trial_photos/Office/23-print-Trythall_St-023.jpg",
+    "prompt": "Contemporary style bedroom, architecture photography, photo from pintrest, realistic image",
+    "negative_prompt": "bad quality, low-resolution",
+    "room_type": "bedroom",
+    "seed": -1
+  }
+}

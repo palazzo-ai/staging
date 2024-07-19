@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 from PIL import Image
-from diffusers import StableDiffusionXLInpaintPipeline, StableDiffusionXLControlNetInpaintPipeline, ControlNetModel
-from diffusers import StableDiffusionUpscalePipeline, DPMSolverMultistepScheduler
+from diffusers import StableDiffusionXLInpaintPipeline
+from diffusers import DPMSolverMultistepScheduler
 
 from utils import get_mask
 
@@ -62,40 +62,21 @@ class Staging:
             device (str): The device to run the pipeline on (default is "cuda").
         """
         self.pipeline = StableDiffusionXLInpaintPipeline.from_single_file(
-            # "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
-            "checkpoints/juggerxlInpaint_juggerInpaintV8.safetensors",
+            "checkpoints/juggernautXL_versionXInpaint.safetensors",
             torch_dtype=torch.float16,
             variant="fp16",
         ).to(device)
         
-        
-        # controlnet = ControlNetModel.from_pretrained(
-        #     "destitech/controlnet-inpaint-dreamer-sdxl", torch_dtype=torch.float16, variant="fp16"
-        #     )
-        
-        # self.pipeline = StableDiffusionXLControlNetInpaintPipeline.from_pretrained(
-        #     "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
-        #     # "/home/nash/stable-diffusion-webui-forge/models/Stable-diffusion/juggerxlInpaint_juggerInpaintV8.safetensors",
-        #     controlnet=controlnet,
-        #     torch_dtype=torch.float16,
-        #     variant="fp16",
-        # ).to(device)
 
         self.pipeline.scheduler = DPMSolverMultistepScheduler.from_config(
             self.pipeline.scheduler.config, use_karras_sigmas=True
         )
         self.pipeline.safety_checker = None
         
-    def load_lora(self, room_type):
+    def load_lora(self):
         self.pipeline.unload_lora_weights()
-
-        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1.2)
-        print("Loaded add-detail")
-
-                
-        if room_type == "bedroom":
-            self.pipeline.load_lora_weights('checkpoints/bedroom.safetensors')
-            print("Loaded bedroom-LoRA")            
+        self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1)
+   
 
     def predict(self, prompt, negative_prompt, image, mask_image):
         """
@@ -116,7 +97,7 @@ class Staging:
             negative_prompt=negative_prompt,
             image=image,
             mask=mask_image,
-            num_inference_steps=30,
+            num_inference_steps=25,
             num_images_per_prompt=1,
             preprocessed=True,
             height=height,
@@ -186,8 +167,7 @@ class Staging:
         kwargs.pop('blur_factor', None)
         
         # Load appropriate room_type LoRA
-        room_type = kwargs.pop('room_type')
-        self.load_lora(room_type)
+        self.load_lora()
         
         if (kwargs.get("width") is None) or (kwargs.get("width") == 0):
             kwargs["width"] = image.size[0]
