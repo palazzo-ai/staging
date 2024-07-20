@@ -1,7 +1,7 @@
 {
   "input": {
     "image_url": "https://palazzob2c-dev.s3.amazonaws.com/image-583c764b-edc0-4887-8aa0-7df499e907ba.jpg",
-    "prompt": "The ((modern bedroom)) style, ((best quality)),((masterpiece)),((realistic)), 4K, HD, high resolution, architecture photography, photo from pintrest, realistic image, <lora:add_detail:0.8>",
-    "negative_prompt": "blurry, unrealistic, synthatic, deformed, disfigured, watermark, text, banner, logo, contactinfo, worst quality, low quality"
+    "prompt": "transitional bedroom style, best quality, masterpiece, realistic, 4K, HD, high resolution, architecture photography, photo from pintrest, realistic image, <lora:add_detail:0.8>",
+    "negative_prompt": "mirror, window, blurry, unrealistic, synthatic, deformed, disfigured, watermark, text, banner, logo, contactinfo, worst quality, low quality"
   }
 }

@@ -117,14 +117,14 @@ def generate_image(job):
     negative_prompt = job_input.get("negative_prompt", None)
     room_type = job_input.get("room_type", "bedroom")
     num_images_per_prompt = job_input.get("num_images", 1)
-    num_inference_steps = job_input.get("num_inference_steps", 25)
-    guidance_scale = job_input.get("guidance_scale", 7)
+    num_inference_steps = job_input.get("num_inference_steps", 30)
+    guidance_scale = job_input.get("guidance_scale", 16)
     seed = job_input.get("seed", -1)
     width = job_input.get('width', None)
     height = job_input.get('height', None)
-    padding_factor = job_input.get('mask_padding', 8)
-    blur_factor = job_input.get('blur_factor', 8)
-    strength = job_input.get('strength', 0.8)
+    padding_factor = job_input.get('mask_padding', 5)
+    blur_factor = job_input.get('blur_factor', 5)
+    strength = job_input.get('strength', 0.90)
     
     # Generate image and mask using the model
     output, mask = MODEL(
