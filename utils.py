@@ -143,7 +143,7 @@ def get_init_mask(class_mask, classes=[], return_labels=False):
     return mask
 
 @torch.inference_mode()
-def get_mask(image, padding_factor=0, classes=TARGET_CLASSES):
+def get_mask(image, padding_factor=0, classes=TARGET_CLASSES, mask_expansion=0.2):
     """
     Generates a mask for the input image using the OneFormer model and applies padding.
 
@@ -166,7 +166,7 @@ def get_mask(image, padding_factor=0, classes=TARGET_CLASSES):
     # final = merge_mask(final, transition_mask)
 
     if padding_factor > 0:
-        top_factor = int(final.shape[0] * 0.2)
+        top_factor = int(final.shape[0] * mask_expansion)
         padding_factor = 10
 
         final[:top_factor, :] = 0
