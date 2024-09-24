@@ -149,6 +149,7 @@ ADE_CLASSES = [
     "glass",
     "clock",
     "flag",
+    "hallway"
 ]
 
 TARGET_CLASSES = [
@@ -167,7 +168,6 @@ TARGET_CLASSES = [
     "armchair",
     "seat",
     "desk",
-    "wardrobe",
     "chest of drawers",
     "counter",
     "sink",

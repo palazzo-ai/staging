@@ -166,7 +166,7 @@ def get_mask(image, padding_factor=0, classes=TARGET_CLASSES):
     # final = merge_mask(final, transition_mask)
 
     if padding_factor > 0:
-        top_factor = int(final.shape[0] * 0.4)
+        top_factor = int(final.shape[0] * 0.2)
         padding_factor = 10
 
         final[:top_factor, :] = 0
