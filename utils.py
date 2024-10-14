@@ -21,12 +21,10 @@ class OneFormer:
         """
         Loads the OneFormer model and processor for universal segmentation.
         """
-        self.processor = OneFormerProcessor.from_pretrained(
-            "shi-labs/oneformer_ade20k_swin_large"
-        )
-        self.model = OneFormerForUniversalSegmentation.from_pretrained(
-            "shi-labs/oneformer_ade20k_swin_large"
-        ).to(self.device)
+        
+        model_dir = "checkpoints/oneformer_ade20k_swin_large"
+        self.processor = OneFormerProcessor.from_pretrained(model_dir)
+        self.model = OneFormerForUniversalSegmentation.from_pretrained(model_dir).to(self.device)
 
     def __call__(self, image):
         """
