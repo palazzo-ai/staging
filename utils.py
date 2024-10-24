@@ -67,7 +67,7 @@ def set_img_dims(img, max_dim=1024):
         PIL.Image: The resized image.
     """
     w, h = img.size
-    scaler = min(w, h) / max_dim
+    scaler = max(w, h) / max_dim
     img = img.resize((int(w / scaler), int(h / scaler)))
     return img
 
