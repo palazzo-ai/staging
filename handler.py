@@ -126,6 +126,7 @@ def generate_image(job):
     blur_factor = job_input.get('blur_factor', 5)
     strength = job_input.get('strength', 0.90)
     mask_expansion = job_input.get('mask_expansion', 0.2)
+    mask_items = job_input.get('mask_items', None)
     
     # Generate image and mask using the model
     output, mask = MODEL(
@@ -142,7 +143,8 @@ def generate_image(job):
         padding_factor=padding_factor,
         blur_factor=blur_factor,
         strength=strength,
-        mask_expansion=mask_expansion
+        mask_expansion=mask_expansion,
+        mask_items=mask_items
     )
     
     mask.save("outputs/mask.png")

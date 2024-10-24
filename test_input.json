@@ -1,8 +1,9 @@
 {
   "input": {
-    "image_url": "https://palazzob2c-dev.s3.amazonaws.com/image-583c764b-edc0-4887-8aa0-7df499e907ba.jpg",
+    "image_url": "https://palazzob2c-dev.s3.amazonaws.com/image-274ecf21-2327-41ce-8056-ea06127d8eaf.png",
     "prompt": "transitional bedroom style, best quality, masterpiece, realistic, 4K, HD, high resolution, architecture photography, photo from Pinterest, realistic image",
     "negative_prompt": "door, hallway, mirror, window, blurry, unrealistic, synthetic, deformed, disfigured, watermark, text, banner, logo, contact info, worst quality, low quality",
-    "mask_expansion": 0.4
+    "mask_expansion": 0.4,
+    "mask_items": ["windowpane", "curtain", "door", "floor"]
   }
 }

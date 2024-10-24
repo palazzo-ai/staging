@@ -78,7 +78,7 @@ class Staging:
         self.pipeline.load_lora_weights('checkpoints/add-detail-xl.safetensors', weights=1)
    
 
-    def predict(self, prompt, negative_prompt, image, mask_image, mask_expansion):
+    def predict(self, prompt, negative_prompt, image, mask_image, mask_expansion, mask_items):
         """
         Generates an inpainted image based on the given prompt and mask.
 
@@ -102,7 +102,8 @@ class Staging:
             preprocessed=True,
             height=height,
             width=width,
-            mask_expansion=mask_expansion
+            mask_expansion=mask_expansion,
+            mask_items=mask_items
         ).images[0]
         return out_img
 
@@ -122,7 +123,7 @@ class Staging:
             prompt=prompt, image=inp_img, num_inference_steps=num_steps
         ).images[0]
 
-    def preprocess_img(self, img, blur_factor=5, padding_factor=5, mask_expansion=0.2):
+    def preprocess_img(self, img, blur_factor=5, padding_factor=5, mask_expansion=0.2, mask_items=None):
         """
         Preprocesses the input image by resizing it and generating a mask.
 
@@ -135,7 +136,7 @@ class Staging:
         """
         img = set_img_dims(img)
         img = resize_image(img)
-        mask = np.array(get_mask(img, padding_factor, mask_expansion=mask_expansion))
+        mask = np.array(get_mask(img, padding_factor, mask_expansion=mask_expansion, mask_items=mask_items))
         mask = mask.astype("uint8")
         mask = self.pipeline.mask_processor.blur(
             Image.fromarray(mask), blur_factor=blur_factor
@@ -161,7 +162,8 @@ class Staging:
             padding_factor = kwargs["padding_factor"]
             blur_factor = kwargs["blur_factor"]
             mask_expansion = kwargs["mask_expansion"]
-            image, mask = self.preprocess_img(image, blur_factor, padding_factor, mask_expansion)
+            mask_items = kwargs["mask_items"]
+            image, mask = self.preprocess_img(image, blur_factor, padding_factor, mask_expansion, mask_items)
         
         # Removing extra keys
         kwargs.pop('padding_factor', None)

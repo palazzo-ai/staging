@@ -94,7 +94,7 @@ def resize_image(img):
     return img
 
 
-def get_init_mask(class_mask, classes=[], return_labels=False):
+def get_init_mask(class_mask, classes=[], return_labels=False, mask_items=None):
     """
     Generates an initial mask based on the class predictions from the segmentation model.
 
@@ -119,21 +119,31 @@ def get_init_mask(class_mask, classes=[], return_labels=False):
 
     if not len(classes):
         classes = ADE_CLASSES
+        
+    if mask_items:
+        classes = mask_items
 
     # Extracting detected labels and ids
     for i, class_label in enumerate(classes):
+        if class_label not in ADE_CLASSES:
+            continue
         class_idx = ADE_CLASSES.index(class_label)
         if np.any(mask == class_idx):
             class_labels.append(class_label)
             class_idxs.append(class_idx)
-    print(class_labels)
 
     # Creating a mask of detected objects
     for idx in class_idxs:
         mask[mask == idx] = 255
     mask[mask != 255] = 0
+    
+    # Inverting mask if mask_items is provided
+    if mask_items:
+        mask = np.invert(mask)
 
     mask = mask.astype(np.uint8)
+    
+    cv2.imwrite("outputs/mask-1.png", mask)
 
     if return_labels:
         return mask, class_labels
@@ -141,7 +151,7 @@ def get_init_mask(class_mask, classes=[], return_labels=False):
     return mask
 
 @torch.inference_mode()
-def get_mask(image, padding_factor=0, classes=TARGET_CLASSES, mask_expansion=0.2):
+def get_mask(image, padding_factor=0, classes=TARGET_CLASSES, mask_expansion=0.2, mask_items=None):
     """
     Generates a mask for the input image using the OneFormer model and applies padding.
 
@@ -154,7 +164,7 @@ def get_mask(image, padding_factor=0, classes=TARGET_CLASSES, mask_expansion=0.2
         PIL.Image: The final mask image.
     """
     class_mask = MODEL(image)
-    final = get_init_mask(class_mask, classes=classes)
+    final = get_init_mask(class_mask, classes=classes, mask_items=mask_items)
     final = cv2.dilate(final, np.ones((5, 5)), iterations=5)
     final = cv2.erode(final, np.ones((5, 5)), iterations=5)
 
