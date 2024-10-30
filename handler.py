@@ -129,7 +129,7 @@ def generate_image(job):
     mask_items = job_input.get('mask_items', None)
     
     # Generate image and mask using the model
-    output, mask = MODEL(
+    output, mask, maskWithoutPadding = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         room_type=room_type,
@@ -148,6 +148,7 @@ def generate_image(job):
     )
     
     mask.save("outputs/mask.png")
+    maskWithoutPadding.save("outputs/maskWithoutPadding.png")
 
     # Encode output images to base64
     image_strings = []
@@ -158,7 +159,6 @@ def generate_image(job):
         # Save image local
         img.save("outputs/output.jpg")
         
-        
         image_strings.append(image_to_base64(output_image))
 
     # Encode mask to base64
@@ -166,10 +166,16 @@ def generate_image(job):
         mask_image = np.array(mask)
     mask_image = image_to_base64(mask_image)
     
+    # Encode maskWithoutPadding to base64
+    if not isinstance(maskWithoutPadding, np.ndarray):
+        mask_image_without_padding = np.array(maskWithoutPadding)
+    mask_image_without_padding = image_to_base64(mask_image)
+    
     # Prepare results dictionary
     results = {
         "result": image_strings[0],
         "mask": mask_image,
+        "mask_image_without_padding": mask_image_without_padding,
         "seed": job_input['seed']
     }
 

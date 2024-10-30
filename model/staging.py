@@ -136,12 +136,12 @@ class Staging:
         """
         img = set_img_dims(img)
         img = resize_image(img)
-        mask = np.array(get_mask(img, padding_factor, mask_expansion=mask_expansion, mask_items=mask_items))
+        mask, maskWithoutPadding = np.array(get_mask(img, padding_factor, mask_expansion=mask_expansion, mask_items=mask_items))
         mask = mask.astype("uint8")
         mask = self.pipeline.mask_processor.blur(
             Image.fromarray(mask), blur_factor=blur_factor
         )
-        return img, mask
+        return img, mask, maskWithoutPadding
 
     def __call__(self, prompt, negative_prompt, image, preprocessed=False, mask=None, **kwargs):
         """
@@ -163,7 +163,7 @@ class Staging:
             blur_factor = kwargs["blur_factor"]
             mask_expansion = kwargs["mask_expansion"]
             mask_items = kwargs["mask_items"]
-            image, mask = self.preprocess_img(image, blur_factor, padding_factor, mask_expansion, mask_items)
+            image, mask, maskWithoutPadding = self.preprocess_img(image, blur_factor, padding_factor, mask_expansion, mask_items)
         
         # Removing extra keys
         kwargs.pop('padding_factor', None)
@@ -185,4 +185,4 @@ class Staging:
             mask_image=mask,
             **kwargs
         )
-        return out_imgs, mask
+        return out_imgs, mask, maskWithoutPadding
