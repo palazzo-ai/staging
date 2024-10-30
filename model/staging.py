@@ -23,7 +23,7 @@ def set_img_dims(img, min_dim=1024):
     # Calculate scaling factor to make the smallest dimension at least min_dim
     if min(w, h) < min_dim:
         scaler = min_dim / min(w, h)
-        img = img.resize((int(w * scaler), int(h * scaler)), Image.ANTIALIAS)
+        img = img.resize((int(w * scaler), int(h * scaler)), Image.Resampling.LANCZOS)
     return img
 
 
