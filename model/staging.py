@@ -136,11 +136,17 @@ class Staging:
         """
         img = set_img_dims(img)
         img = resize_image(img)
-        mask, maskWithoutPadding = np.array(get_mask(img, padding_factor, mask_expansion=mask_expansion, mask_items=mask_items))
+        mask, maskWithoutPadding = get_mask(img, padding_factor, mask_expansion=mask_expansion, mask_items=mask_items)
+        mask = np.array(mask)
+        maskWithoutPadding = np.array(maskWithoutPadding)
         mask = mask.astype("uint8")
+        maskWithoutPadding = maskWithoutPadding.astype("uint8")
         mask = self.pipeline.mask_processor.blur(
             Image.fromarray(mask), blur_factor=blur_factor
         )
+        
+        maskWithoutPadding = Image.fromarray(maskWithoutPadding)
+         
         return img, mask, maskWithoutPadding
 
     def __call__(self, prompt, negative_prompt, image, preprocessed=False, mask=None, **kwargs):

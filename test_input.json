@@ -3,7 +3,7 @@
     "image_url": "https://palazzob2c-dev.s3.amazonaws.com/image-6d33cdca-626d-4295-aefe-98f28b206489.jpg",
     "prompt": "ultra realistic transitional bathroom style, minimal furniture, best quality, masterpiece, realistic, 4K, HD, high resolution",
     "negative_prompt": "bathtub, sink, door, hallway, mirror, window, blurry, unrealistic, synthetic, deformed, disfigured, watermark, text, banner, logo, contact info, worst quality, low quality",
-    "mask_expansion": 0,
+    "mask_expansion": 0.3,
     "mask_items": ["windowpane", "door", "floor", "sink", "bathtub"]
   }
 }

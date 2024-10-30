@@ -142,8 +142,6 @@ def get_init_mask(class_mask, classes=[], return_labels=False, mask_items=None):
         mask = np.invert(mask)
 
     mask = mask.astype(np.uint8)
-    
-    cv2.imwrite("outputs/mask-1.png", mask)
 
     if return_labels:
         return mask, class_labels
@@ -167,7 +165,7 @@ def get_mask(image, padding_factor=0, classes=TARGET_CLASSES, mask_expansion=0.2
     final = get_init_mask(class_mask, classes=classes, mask_items=mask_items)
     final = cv2.dilate(final, np.ones((5, 5)), iterations=5)
     final = cv2.erode(final, np.ones((5, 5)), iterations=5)
-    maskWithoutPadding = final
+    maskWithoutPadding = final.copy()
 
     # Optionally, add room transition masks
     # transition_mask = get_room_transition_masks(image)

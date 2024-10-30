@@ -169,7 +169,7 @@ def generate_image(job):
     # Encode maskWithoutPadding to base64
     if not isinstance(maskWithoutPadding, np.ndarray):
         mask_image_without_padding = np.array(maskWithoutPadding)
-    mask_image_without_padding = image_to_base64(mask_image)
+    mask_image_without_padding = image_to_base64(mask_image_without_padding)
     
     # Prepare results dictionary
     results = {
