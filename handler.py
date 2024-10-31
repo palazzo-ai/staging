@@ -127,9 +127,10 @@ def generate_image(job):
     strength = job_input.get('strength', 0.90)
     mask_expansion = job_input.get('mask_expansion', 0.2)
     mask_items = job_input.get('mask_items', None)
+    denoising_strength = job_input.get('denoising_strength', 0.75)
     
     # Generate image and mask using the model
-    output, mask, maskWithoutPadding = MODEL(
+    output, mask, maskWithoutPadding, args = MODEL(
         prompt=prompt,
         negative_prompt=negative_prompt,
         room_type=room_type,
@@ -144,7 +145,8 @@ def generate_image(job):
         blur_factor=blur_factor,
         strength=strength,
         mask_expansion=mask_expansion,
-        mask_items=mask_items
+        mask_items=mask_items,
+        denoising_strength=denoising_strength,
     )
     
     mask.save("outputs/mask.png")
@@ -176,7 +178,8 @@ def generate_image(job):
         "result": image_strings[0],
         "mask": mask_image,
         "mask_image_without_padding": mask_image_without_padding,
-        "seed": job_input['seed']
+        "seed": job_input['seed'],
+        "args": args
     }
 
     if starting_image:

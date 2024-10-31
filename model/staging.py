@@ -191,4 +191,4 @@ class Staging:
             mask_image=mask,
             **kwargs
         )
-        return out_imgs, mask, maskWithoutPadding
+        return out_imgs, mask, maskWithoutPadding, kwargs
